@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Tool</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #f4f2ed;
+  --surface: #ffffff;
+  --surface2:#ebe8e1;
+  --border:  #d6d2c9;
+  --accent:  #1c1c2e;
+  --red:     #bf3030;
+  --amber:   #c96a00;
+  --green:   #1a7a42;
+  --blue:    #1a4fa0;
+  --text:    #111111;
+  --text2:   #555555;
+  --text3:   #999999;
+  --r:       6px;
+  --mono:    ui-monospace, Menlo, Consolas, monospace;
+  --sans:    -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* HEADER */
+.header {
+  background: var(--accent);
+  color: #fff;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+  flex-shrink: 0;
+}
+.header-left { display: flex; align-items: center; gap: 10px; }
+.header-icon {
+  width: 28px; height: 28px; border-radius: 5px;
+  background: rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+.header-title { font-size: 13px; font-weight: 600; }
+.header-sub   { font-size: 10px; opacity: 0.4; margin-top: 1px; font-family: var(--mono); }
+.live-badge {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; opacity: 0.5; font-family: var(--mono);
+}
+.live-dot { width: 5px; height: 5px; background: #4ecb71; border-radius: 50%; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* TABS */
+.tabs {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.tab {
+  flex: 1; padding: 10px 8px;
+  font-size: 11px; font-weight: 500; font-family: var(--sans);
+  color: var(--text3); border: none; background: none;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  text-transform: uppercase; letter-spacing: .04em;
+  transition: color .15s, border-color .15s;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* CONTENT */
+.content { flex: 1; min-height: 0; position: relative; }
+.panel { display: none; position: absolute; inset: 0; overflow-y: auto; padding: 16px; }
+.panel.active { display: block; }
+.panel::-webkit-scrollbar { width: 4px; }
+.panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: var(--r);
+  font-size: 12px; font-weight: 500; font-family: var(--sans);
+  cursor: pointer; border: none; transition: background .15s, color .15s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #2e2e48; }
+.btn-ghost   { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--surface2); color: var(--text); }
+.btn-sm  { padding: 6px 11px; font-size: 11px; }
+.btn-xs  { padding: 3px 8px;  font-size: 10px; border-radius: 4px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* URL BAR */
+.url-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.url-bar-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.url-bar-label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; color: var(--text3); }
+.url-status { font-size: 10px; font-family: var(--mono); color: var(--text3); }
+.url-status.ok      { color: var(--green); }
+.url-status.error   { color: var(--red); }
+.url-status.loading { color: var(--amber); }
+.url-row { display: flex; gap: 8px; }
+.url-input {
+  flex: 1; padding: 7px 10px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r);
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  transition: border-color .15s;
+}
+.url-input:focus { outline: none; border-color: var(--accent); }
+.url-input::placeholder { color: var(--text3); }
+.url-hint { margin-top: 7px; font-size: 10px; color: var(--text3); font-family: var(--mono); }
+
+/* SCAN ROW */
+.scan-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.scan-meta { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 10px 12px; text-align: center;
+}
+.stat-n { font-size: 22px; font-weight: 700; font-family: var(--mono); line-height: 1; color: var(--text3); }
+.stat-n.red   { color: var(--red); }
+.stat-n.amber { color: var(--amber); }
+.stat-l { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-top: 4px; }
+
+/* ISSUE CARDS */
+.section-label { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; color: var(--text3); margin-bottom: 8px; }
+.issues { display: flex; flex-direction: column; gap: 6px; }
+
+.issue { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.issue-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; cursor: pointer; user-select: none;
+  transition: background .1s;
+}
+.issue-head:hover { background: var(--surface2); }
+.sev-bar { width: 3px; border-radius: 2px; align-self: stretch; min-height: 16px; flex-shrink: 0; }
+.sev-error   { background: var(--red); }
+.sev-warning { background: var(--amber); }
+.sev-info    { background: var(--blue); }
+.issue-name {
+  flex: 1; font-size: 11px; color: var(--text2); font-family: var(--mono);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.issue-badge { font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 20px; }
+.ib-error   { background: color-mix(in srgb, var(--red) 12%, transparent);   color: var(--red); }
+.ib-warning { background: color-mix(in srgb, var(--amber) 12%, transparent); color: var(--amber); }
+.ib-info    { background: color-mix(in srgb, var(--blue) 12%, transparent);  color: var(--blue); }
+.issue-chev { font-size: 9px; color: var(--text3); transition: transform .2s; flex-shrink: 0; }
+.issue-chev.open { transform: rotate(90deg); }
+
+.issue-body { display: none; border-top: 1px solid var(--border); padding: 10px 12px; }
+.issue-body.open { display: block; }
+
+.violation { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--surface2); }
+.violation:last-of-type { border-bottom: none; padding-bottom: 2px; }
+.vtype {
+  font-size: 9px; text-transform: uppercase; letter-spacing: .05em; font-weight: 600;
+  padding: 2px 6px; border-radius: 3px; flex-shrink: 0; margin-top: 1px;
+  font-family: var(--mono);
+}
+.vt-substitution   { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); }
+.vt-capitalization { background: color-mix(in srgb, var(--amber) 15%, transparent);  color: var(--amber); }
+.vt-punctuation    { background: color-mix(in srgb, var(--green) 15%, transparent);  color: var(--green); }
+.vt-tone           { background: color-mix(in srgb, var(--red) 12%, transparent);    color: var(--red); }
+.v-body { flex: 1; }
+.v-line { font-family: var(--mono); font-size: 11px; margin-bottom: 3px; }
+.v-found   { background: color-mix(in srgb, var(--red) 12%, transparent);   color: var(--red);   padding: 1px 5px; border-radius: 3px; }
+.v-arrow   { color: var(--text3); margin: 0 3px; }
+.v-suggest { background: color-mix(in srgb, var(--green) 12%, transparent); color: var(--green); padding: 1px 5px; border-radius: 3px; }
+.v-reason  { font-size: 11px; color: var(--text3); }
+.issue-actions { margin-top: 8px; display: flex; gap: 6px; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 44px 20px; color: var(--text3); }
+.empty-icon  { font-size: 28px; margin-bottom: 10px; }
+.empty-title { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 5px; }
+.empty-body  { font-size: 12px; line-height: 1.6; }
+
+/* SPINNER */
+.spinner {
+  width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin .7s linear infinite; display: inline-block; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SETTINGS */
+.settings-section { margin-bottom: 22px; }
+.settings-section h3 {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 600;
+  color: var(--text3); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.field { margin-bottom: 10px; }
+.field label { display: block; font-size: 11px; color: var(--text2); font-weight: 500; margin-bottom: 4px; }
+.field input, .field select {
+  width: 100%; padding: 7px 10px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  transition: border-color .15s;
+}
+.field select { font-family: var(--sans); }
+.field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+.field-row { display: flex; gap: 8px; }
+.field-row .field { flex: 1; }
+
+.schema-box {
+  background: var(--accent); color: rgba(255,255,255,.8);
+  border-radius: var(--r); padding: 12px 14px;
+  font-family: var(--mono); font-size: 10px; line-height: 1.9;
+  margin-bottom: 14px; white-space: pre; overflow-x: auto;
+}
+.sk { color: #79d9f4; }
+.ss { color: #b5f0a0; }
+.sv { color: #ffd580; }
+.sc { color: rgba(255,255,255,.3); }
+
+.rule-list { display: flex; flex-direction: column; gap: 5px; max-height: 240px; overflow-y: auto; }
+.rule-row {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 7px 10px;
+}
+.rule-pattern { font-family: var(--mono); font-size: 11px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rule-suggest { font-family: var(--mono); font-size: 11px; color: var(--green); flex-shrink: 0; }
+.rule-del {
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: 15px; padding: 0 2px; line-height: 1; flex-shrink: 0; transition: color .15s;
+}
+.rule-del:hover { color: var(--red); }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 14px; left: 50%;
+  transform: translateX(-50%) translateY(50px);
+  background: var(--accent); color: #fff;
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 11px; font-weight: 500;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  z-index: 999; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon">✦</div>
+    <div>
+      <div class="header-title">Content Tool</div>
+      <div class="header-sub">style guide checker</div>
+    </div>
+  </div>
+  <div class="live-badge"><div class="live-dot"></div>live</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="check">Check</button>
+  <button class="tab" data-tab="settings">Settings</button>
+</div>
+
+<div class="content">
+
+  <!-- CHECK PANEL -->
+  <div class="panel active" id="panel-check">
+
+    <div class="url-bar">
+      <div class="url-bar-top">
+        <div class="url-bar-label">Rules URL</div>
+        <div class="url-status" id="url-status">not configured</div>
+      </div>
+      <div class="url-row">
+        <input class="url-input" id="url-input" type="url"
+          placeholder="https://your-site.com/style-rules.json">
+        <button class="btn btn-ghost btn-sm" id="btn-fetch">Load</button>
+      </div>
+      <div class="url-hint" id="url-hint">Enter a URL to a JSON rules file, then press Load.</div>
+    </div>
+
+    <div class="scan-row">
+      <button class="btn btn-primary" id="btn-scan">
+        <span id="scan-label">Scan page</span>
+      </button>
+      <div class="scan-meta" id="scan-meta"></div>
+    </div>
+
+    <div id="check-body">
+      <div class="empty">
+        <div class="empty-icon">◎</div>
+        <div class="empty-title">Nothing scanned yet</div>
+        <div class="empty-body">Load your rules URL above,<br>then hit Scan page.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SETTINGS PANEL -->
+  <div class="panel" id="panel-settings">
+
+    <div class="settings-section">
+      <h3>JSON format</h3>
+      <p style="font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px">Host a JSON array at any URL. Each rule object:
+      </p>
+      <div class="schema-box"><span class="sc">// style-rules.json</span>
+<span class="sv">[</span>
+  <span class="sv">{</span>
+    <span class="sk">"type"</span>:        <span class="ss">"substitution"</span>  <span class="sc">| "capitalization" | "punctuation" | "tone"</span>
+    <span class="sk">"pattern"</span>:     <span class="ss">"utilize"</span>       <span class="sc">plain word, or "/regex/flags"</span>
+    <span class="sk">"suggestion"</span>:   <span class="ss">"use"</span>           <span class="sc">shown as the fix  (optional)</span>
+    <span class="sk">"reason"</span>:       <span class="ss">"Simpler prose"</span> <span class="sc">tooltip note      (optional)</span>
+    <span class="sk">"severity"</span>:     <span class="ss">"error"</span>         <span class="sc">| "warning" | "info"</span>
+    <span class="sk">"caseSensitive"</span>: <span class="sv">false</span>          <span class="sc">default: false</span>
+  <span class="sv">}</span>
+<span class="sv">]</span></div>
+    </div>
+
+    <div class="settings-section">
+      <h3>Add a rule manually</h3>
+      <div class="field">
+        <label>Type</label>
+        <select id="new-type">
+          <option value="substitution">Substitution</option>
+          <option value="capitalization">Capitalization</option>
+          <option value="punctuation">Punctuation</option>
+          <option value="tone">Tone / formality</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Pattern</label><input id="new-pattern" placeholder='utilize  or  /\bOK\b/i'></div>
+        <div class="field"><label>Suggestion</label><input id="new-suggestion" placeholder="use"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Reason</label><input id="new-reason" placeholder="Simpler and more direct"></div>
+        <div class="field">
+          <label>Severity</label>
+          <select id="new-severity">
+            <option value="warning" selected>Warning</option>
+            <option value="error">Error</option>
+            <option value="info">Info</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn btn-primary btn-sm" id="btn-add-rule">+ Add rule</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3>Active rules <span id="rule-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)"></span></h3>
+      <div class="rule-list" id="rule-list">
+        <div style="font-size:11px;color:var(--text3);padding:6px 0">No rules loaded yet.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let rules     = [];
+let allIssues = [];
+
+// ── RULE ENGINE ─────────────────────────────────────────────
+function checkText(text) {
+  const violations = [];
+  for (const rule of rules) {
+    const matches = findMatches(text, rule);
+    if (matches.length) violations.push({ rule, matches });
+  }
+  return violations;
+}
+
+function findMatches(text, rule) {
+  const found = [];
+  if (rule.pattern.startsWith('/')) {
+    const last  = rule.pattern.lastIndexOf('/');
+    const src   = rule.pattern.slice(1, last);
+    const flags = rule.pattern.slice(last + 1) || 'gi';
+    try {
+      const rx = new RegExp(src, flags.includes('g') ? flags : flags + 'g');
+      let m; while ((m = rx.exec(text)) !== null) found.push(m[0]);
+    } catch(e) {}
+  } else {
+    const flags   = rule.caseSensitive ? 'g' : 'gi';
+    const escaped = rule.pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const bounded = (rule.type === 'substitution' || rule.type === 'tone');
+    try {
+      const rx = new RegExp(bounded ? `\\b${escaped}\\b` : escaped, flags);
+      let m; while ((m = rx.exec(text)) !== null) found.push(m[0]);
+    } catch(e) {}
+  }
+  return [...new Set(found)];
+}
+
+// ── RENDER CHECK TAB ────────────────────────────────────────
+function renderIssues() {
+  const body = document.getElementById('check-body');
+  const meta = document.getElementById('scan-meta');
+
+  if (allIssues.length === 0) {
+    meta.textContent = '';
+    body.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon" style="color:var(--green)">✓</div>
+        <div class="empty-title" style="color:var(--green)">All clear</div>
+        <div class="empty-body">No style issues found on this page.</div>
+      </div>`;
+    return;
+  }
+
+  let errors = 0, warnings = 0, infos = 0;
+  allIssues.forEach(i => i.violations.forEach(v => {
+    if (v.rule.severity === 'error') errors++;
+    else if (v.rule.severity === 'warning') warnings++;
+    else infos++;
+  }));
+  meta.textContent = `${allIssues.length} layer${allIssues.length !== 1 ? 's' : ''} flagged`;
+
+  const order = s => s === 'error' ? 0 : s === 'warning' ? 1 : 2;
+  const sorted = [...allIssues].sort((a, b) => {
+    const aw = Math.min(...a.violations.map(v => order(v.rule.severity)));
+    const bw = Math.min(...b.violations.map(v => order(v.rule.severity)));
+    return aw - bw;
+  });
+
+  body.innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="stat-n red">${errors}</div><div class="stat-l">Errors</div></div>
+      <div class="stat"><div class="stat-n amber">${warnings}</div><div class="stat-l">Warnings</div></div>
+      <div class="stat"><div class="stat-n">${infos}</div><div class="stat-l">Info</div></div>
+    </div>
+    <div class="section-label">${sorted.length} layer${sorted.length !== 1 ? 's' : ''} with issues</div>
+    <div class="issues">${sorted.map(renderCard).join('')}</div>`;
+}
+
+function renderCard(issue, i) {
+  const order = s => s === 'error' ? 0 : s === 'warning' ? 1 : 2;
+  const worst = issue.violations.reduce((w, v) =>
+    order(v.rule.severity) < order(w) ? v.rule.severity : w, 'info');
+  const vc = issue.violations.length;
+  return `
+  <div class="issue">
+    <div class="issue-head" onclick="toggleCard(${i})">
+      <div class="sev-bar sev-${worst}"></div>
+      <div class="issue-name">${esc(issue.name || 'Text layer')}</div>
+      <span class="issue-badge ib-${worst}">${vc} issue${vc !== 1 ? 's' : ''}</span>
+      <span class="issue-chev" id="chev-${i}">▶</span>
+    </div>
+    <div class="issue-body" id="ibody-${i}">
+      ${issue.violations.map(v => `
+        <div class="violation">
+          <span class="vtype vt-${v.rule.type}">${v.rule.type}</span>
+          <div class="v-body">
+            <div class="v-line">
+              ${v.matches.map(m => `<span class="v-found">${esc(m)}</span>`).join(' ')}
+              ${v.rule.suggestion ? `<span class="v-arrow">→</span><span class="v-suggest">${esc(v.rule.suggestion)}</span>` : ''}
+            </div>
+            ${v.rule.reason ? `<div class="v-reason">${esc(v.rule.reason)}</div>` : ''}
+          </div>
+        </div>`).join('')}
+      <div class="issue-actions">
+        <button class="btn btn-ghost btn-xs" onclick="focusNode('${issue.nodeId}')">↗ Focus layer</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleCard(i) {
+  document.getElementById(`ibody-${i}`).classList.toggle('open');
+  document.getElementById(`chev-${i}`).classList.toggle('open');
+}
+function focusNode(id) { send({ type: 'focus-node', id }); }
+
+// ── RENDER SETTINGS TAB ─────────────────────────────────────
+function renderRuleList() {
+  const list  = document.getElementById('rule-list');
+  const count = document.getElementById('rule-count');
+  count.textContent = `(${rules.length})`;
+  if (!rules.length) {
+    list.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:6px 0">No rules loaded yet.</div>';
+    return;
+  }
+  list.innerHTML = rules.map((r, i) => `
+    <div class="rule-row">
+      <span class="vtype vt-${r.type}" style="flex-shrink:0">${r.type}</span>
+      <span class="rule-pattern">${esc(r.pattern)}</span>
+      ${r.suggestion ? `<span class="rule-suggest">→ ${esc(r.suggestion)}</span>` : ''}
+      <button class="rule-del" onclick="deleteRule(${i})">×</button>
+    </div>`).join('');
+}
+
+function deleteRule(i) {
+  rules.splice(i, 1);
+  renderRuleList();
+  send({ type: 'cache-rules', rules });
+}
+
+// ── URL FETCH ───────────────────────────────────────────────
+async function fetchRules(url) {
+  const statusEl = document.getElementById('url-status');
+  const hintEl   = document.getElementById('url-hint');
+  statusEl.className = 'url-status loading';
+  statusEl.textContent = 'fetching…';
+  hintEl.textContent = '';
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error('Expected a JSON array');
+    rules = data;
+    statusEl.className = 'url-status ok';
+    statusEl.textContent = `✓ ${rules.length} rules`;
+    hintEl.textContent = `Loaded ${new Date().toLocaleTimeString()}`;
+    send({ type: 'save-url', url });
+    send({ type: 'cache-rules', rules });
+    renderRuleList();
+    toast(`${rules.length} rules loaded`);
+  } catch(e) {
+    statusEl.className = 'url-status error';
+    statusEl.textContent = `✗ ${e.message}`;
+    hintEl.textContent = 'Check the URL is reachable and returns JSON.';
+  }
+}
+
+// ── EVENTS ──────────────────────────────────────────────────
+document.getElementById('btn-fetch').addEventListener('click', () => {
+  const url = document.getElementById('url-input').value.trim();
+  if (url) fetchRules(url);
+});
+document.getElementById('url-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-fetch').click();
+});
+
+document.getElementById('btn-scan').addEventListener('click', () => {
+  if (!rules.length) { toast('Load rules first'); return; }
+  document.getElementById('btn-scan').disabled = true;
+  document.getElementById('scan-label').innerHTML = '<span class="spinner"></span> Scanning…';
+  send({ type: 'scan-page' });
+});
+
+document.getElementById('btn-add-rule').addEventListener('click', () => {
+  const pattern = document.getElementById('new-pattern').value.trim();
+  if (!pattern) { document.getElementById('new-pattern').focus(); return; }
+  rules.push({
+    type:       document.getElementById('new-type').value,
+    pattern,
+    suggestion: document.getElementById('new-suggestion').value.trim(),
+    reason:     document.getElementById('new-reason').value.trim(),
+    severity:   document.getElementById('new-severity').value,
+  });
+  ['new-pattern','new-suggestion','new-reason'].forEach(id => document.getElementById(id).value = '');
+  renderRuleList();
+  send({ type: 'cache-rules', rules });
+  toast('Rule added');
+});
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab, .panel').forEach(el => el.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+    if (tab.dataset.tab === 'settings') renderRuleList();
+  });
+});
+
+// ── MESSAGES FROM MAIN THREAD ───────────────────────────────
+window.onmessage = (event) => {
+  const msg = event.data.pluginMessage;
+  if (!msg) return;
+  switch (msg.type) {
+    case 'init':
+      if (msg.rulesUrl) {
+        document.getElementById('url-input').value = msg.rulesUrl;
+        fetchRules(msg.rulesUrl);
+      } else if (msg.cachedRules && msg.cachedRules.length) {
+        rules = msg.cachedRules;
+        const statusEl = document.getElementById('url-status');
+        statusEl.className = 'url-status ok';
+        statusEl.textContent = `✓ ${rules.length} rules (cached)`;
+        renderRuleList();
+      }
+      break;
+    case 'scan-results':
+      document.getElementById('btn-scan').disabled = false;
+      document.getElementById('scan-label').textContent = 'Scan page';
+      allIssues = [];
+      for (const node of (msg.nodes || [])) {
+        if (!node.text || !node.text.trim()) continue;
+        const violations = checkText(node.text);
+        if (violations.length) allIssues.push({ nodeId: node.id, name: node.name, text: node.text, violations });
+      }
+      renderIssues();
+      break;
+    case 'live-update':
+      for (const node of (msg.nodes || [])) {
+        const violations = checkText(node.text || '');
+        const idx = allIssues.findIndex(i => i.nodeId === node.id);
+        if (violations.length) {
+          const entry = { nodeId: node.id, name: node.name, text: node.text, violations };
+          if (idx >= 0) allIssues[idx] = entry; else allIssues.push(entry);
+        } else if (idx >= 0) allIssues.splice(idx, 1);
+      }
+      renderIssues();
+      break;
+  }
+};
+
+// ── HELPERS ─────────────────────────────────────────────────
+function send(msg) { parent.postMessage({ pluginMessage: msg }, '*'); }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>

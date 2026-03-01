@@ -1,0 +1,12 @@
+{
+  "name": "Content Tool",
+  "id": "content-tool-style-checker",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["*"],
+    "reasoning": "Fetches style guide rules from a user-configured JSON URL so the plugin can check text against an external style guide."
+  }
+}

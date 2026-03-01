@@ -1,0 +1,18 @@
+[
+  {"type":"substitution","pattern":"utilize","suggestion":"use","reason":"Simpler and more direct","severity":"warning"},
+  {"type":"substitution","pattern":"in order to","suggestion":"to","reason":"Redundant phrasing","severity":"warning"},
+  {"type":"substitution","pattern":"leverage","suggestion":"use","reason":"Overused business jargon","severity":"warning"},
+  {"type":"substitution","pattern":"synergy","suggestion":"","reason":"Avoid buzzwords","severity":"error"},
+  {"type":"substitution","pattern":"click here","suggestion":"descriptive link text","reason":"Inaccessible link text","severity":"error"},
+  {"type":"substitution","pattern":"please note that","suggestion":"","reason":"Redundant filler phrase","severity":"info"},
+  {"type":"substitution","pattern":"as per","suggestion":"according to","reason":"Formal/legalistic phrasing","severity":"warning"},
+  {"type":"substitution","pattern":"touch base","suggestion":"connect","reason":"Vague idiom","severity":"info"},
+  {"type":"substitution","pattern":"commence","suggestion":"start","reason":"Unnecessarily formal","severity":"warning"},
+  {"type":"substitution","pattern":"prior to","suggestion":"before","reason":"Simpler alternative","severity":"info"},
+  {"type":"tone","pattern":"obviously","suggestion":"","reason":"Can sound condescending","severity":"warning"},
+  {"type":"tone","pattern":"just","suggestion":"","reason":"Minimising language","severity":"info"},
+  {"type":"tone","pattern":"simply","suggestion":"","reason":"Can imply the task is easy","severity":"info"},
+  {"type":"tone","pattern":"easy","suggestion":"","reason":"Avoid telling users something is easy","severity":"warning"},
+  {"type":"punctuation","pattern":"!!","suggestion":"!","reason":"Avoid multiple exclamation marks","severity":"warning"},
+  {"type":"punctuation","pattern":"...","suggestion":"…","reason":"Use the ellipsis character, not three dots","severity":"info"}
+]
