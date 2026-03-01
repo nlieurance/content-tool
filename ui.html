@@ -8,7 +8,8 @@
 :root {
   --bg: #f4f2ed; --surface: #fff; --surface2: #ebe8e1; --border: #d6d2c9;
   --accent: #1c1c2e; --red: #bf3030; --amber: #c96a00; --green: #1a7a42;
-  --blue: #1a4fa0; --text: #111; --text2: #555; --text3: #999; --r: 6px;
+  --blue: #1a4fa0; --purple: #6428a0; --teal: #007878;
+  --text: #111; --text2: #555; --text3: #999; --r: 6px;
   --mono: ui-monospace, Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
@@ -37,24 +38,19 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); font
 .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--r); font-size: 12px; font-weight: 500; font-family: var(--sans); cursor: pointer; border: none; transition: background .15s, color .15s; }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-primary:hover { background: #2e2e48; }
+.btn-success { background: var(--green); color: #fff; }
+.btn-success:hover { background: #145c32; }
 .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
 .btn-ghost:hover { background: var(--surface2); color: var(--text); }
 .btn-sm { padding: 6px 11px; font-size: 11px; }
 .btn-xs { padding: 3px 8px; font-size: 10px; border-radius: 4px; }
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 
-.url-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; margin-bottom: 12px; }
-.url-bar-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.url-bar-label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; color: var(--text3); }
-.url-status { font-size: 10px; font-family: var(--mono); color: var(--text3); }
-.url-status.ok { color: var(--green); }
-.url-status.err { color: var(--red); }
-.url-status.loading { color: var(--amber); }
-.url-row { display: flex; gap: 8px; }
-.url-input { flex: 1; padding: 7px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); font-family: var(--mono); font-size: 11px; color: var(--text); transition: border-color .15s; }
-.url-input:focus { outline: none; border-color: var(--accent); }
-.url-input::placeholder { color: var(--text3); }
-.url-hint { margin-top: 7px; font-size: 10px; color: var(--text3); font-family: var(--mono); min-height: 14px; }
+/* connection bar */
+.conn-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.conn-status { font-size: 11px; font-family: var(--mono); color: var(--text3); }
+.conn-status.ok { color: var(--green); }
+.conn-status.err { color: var(--red); }
 
 .diag-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 12px; margin-bottom: 12px; font-size: 11px; font-family: var(--mono); color: var(--text2); display: none; }
 .diag-bar.visible { display: block; }
@@ -65,13 +61,11 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); font
 .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
 .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 12px; text-align: center; }
 .stat-n { font-size: 22px; font-weight: 700; font-family: var(--mono); line-height: 1; color: var(--text3); }
-.stat-n.red { color: var(--red); }
-.stat-n.amber { color: var(--amber); }
+.stat-n.red { color: var(--red); } .stat-n.amber { color: var(--amber); }
 .stat-l { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-top: 4px; }
 
 .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; color: var(--text3); margin-bottom: 8px; }
 .issues { display: flex; flex-direction: column; gap: 6px; }
-
 .issue { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
 .issue-head { display: flex; align-items: center; gap: 8px; padding: 9px 12px; cursor: pointer; user-select: none; transition: background .1s; }
 .issue-head:hover { background: var(--surface2); }
@@ -89,19 +83,19 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); font
 .violation { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--surface2); }
 .violation:last-of-type { border-bottom: none; padding-bottom: 2px; }
 .vtype { font-size: 9px; text-transform: uppercase; letter-spacing: .05em; font-weight: 600; padding: 2px 6px; border-radius: 3px; flex-shrink: 0; margin-top: 1px; font-family: var(--mono); }
-.vt-substitution  { background: rgba(28,28,46,.1);    color: var(--accent); }
-.vt-capitalization { background: rgba(201,106,0,.15);  color: var(--amber); }
-.vt-punctuation   { background: rgba(26,122,66,.15);   color: var(--green); }
-.vt-tone          { background: rgba(191,48,48,.12);   color: var(--red); }
-.vt-grammar       { background: rgba(26,79,160,.12);   color: var(--blue); }
-.vt-style         { background: rgba(100,60,160,.12);  color: #6428a0; }
-.vt-voice         { background: rgba(0,130,130,.12);   color: #007878; }
+.vt-substitution  { background: rgba(28,28,46,.1);   color: var(--accent); }
+.vt-capitalization { background: rgba(201,106,0,.15); color: var(--amber); }
+.vt-punctuation   { background: rgba(26,122,66,.15);  color: var(--green); }
+.vt-tone          { background: rgba(191,48,48,.12);  color: var(--red); }
+.vt-grammar       { background: rgba(26,79,160,.12);  color: var(--blue); }
+.vt-style         { background: rgba(100,60,160,.12); color: var(--purple); }
+.vt-voice         { background: rgba(0,130,130,.12);  color: var(--teal); }
 .v-body { flex: 1; }
 .v-line { font-family: var(--mono); font-size: 11px; margin-bottom: 3px; }
-.v-found { background: rgba(191,48,48,.12); color: var(--red); padding: 1px 5px; border-radius: 3px; }
-.v-arrow { color: var(--text3); margin: 0 3px; }
+.v-found   { background: rgba(191,48,48,.12); color: var(--red);   padding: 1px 5px; border-radius: 3px; }
+.v-arrow   { color: var(--text3); margin: 0 3px; }
 .v-suggest { background: rgba(26,122,66,.12); color: var(--green); padding: 1px 5px; border-radius: 3px; }
-.v-reason { font-size: 11px; color: var(--text3); }
+.v-reason  { font-size: 11px; color: var(--text3); }
 .issue-actions { margin-top: 8px; display: flex; gap: 6px; }
 
 .empty { text-align: center; padding: 44px 20px; color: var(--text3); }
@@ -110,8 +104,10 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); font
 .empty-body { font-size: 12px; line-height: 1.6; }
 
 .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; vertical-align: middle; }
+.spinner-dark { border-color: var(--border); border-top-color: var(--accent); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Settings */
 .settings-section { margin-bottom: 22px; }
 .settings-section h3 { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; color: var(--text3); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
 .field { margin-bottom: 10px; }
@@ -121,26 +117,31 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); font
 .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
 .field-row { display: flex; gap: 8px; }
 .field-row .field { flex: 1; }
+.field-hint { font-size: 10px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
 
-.schema-box { background: var(--accent); color: rgba(255,255,255,.8); border-radius: var(--r); padding: 12px 14px; font-family: var(--mono); font-size: 10px; line-height: 1.9; margin-bottom: 14px; white-space: pre; overflow-x: auto; }
-.sk { color: #79d9f4; } .ss { color: #b5f0a0; } .sv { color: #ffd580; } .sc { color: rgba(255,255,255,.3); }
+/* Add rule form */
+.add-rule-form { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 14px; }
+.add-rule-form h3 { font-size: 11px; font-weight: 600; color: var(--text2); margin-bottom: 12px; }
+.form-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.form-status { font-size: 11px; font-family: var(--mono); }
+.form-status.ok  { color: var(--green); }
+.form-status.err { color: var(--red); }
 
-.rule-list { display: flex; flex-direction: column; gap: 5px; max-height: 240px; overflow-y: auto; }
+.rule-list { display: flex; flex-direction: column; gap: 5px; max-height: 220px; overflow-y: auto; }
 .rule-row { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 7px 10px; }
 .rule-pattern { font-family: var(--mono); font-size: 11px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rule-suggest { font-family: var(--mono); font-size: 11px; color: var(--green); flex-shrink: 0; }
-.rule-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 15px; padding: 0 2px; line-height: 1; flex-shrink: 0; transition: color .15s; }
-.rule-del:hover { color: var(--red); }
 
 .toast { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%) translateY(50px); background: var(--accent); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 11px; font-weight: 500; transition: transform .3s cubic-bezier(.34,1.56,.64,1); z-index: 999; pointer-events: none; }
 .toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--green); }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-left">
-    <div class="header-icon">✦</div>
+    <div class="header-icon">&#10022;</div>
     <div>
       <div class="header-title">Content Tool</div>
       <div class="header-sub">style guide checker</div>
@@ -151,79 +152,51 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); font
 
 <div class="tabs">
   <button class="tab active" data-tab="check">Check</button>
+  <button class="tab" data-tab="rules">Add Rule</button>
   <button class="tab" data-tab="settings">Settings</button>
 </div>
 
 <div class="content">
 
+  <!-- ── CHECK ─────────────────────────────────────────── -->
   <div class="panel active" id="panel-check">
-
-    <div class="url-bar">
-      <div class="url-bar-top">
-        <div class="url-bar-label">Rules URL</div>
-        <div class="url-status" id="url-status">not configured</div>
-      </div>
-      <div class="url-row">
-        <input class="url-input" id="url-input" type="text"
-          placeholder="https://your-site.com/style-rules.json">
-        <button class="btn btn-ghost btn-sm" id="btn-fetch">Load</button>
-      </div>
-      <div class="url-hint" id="url-hint">Paste a URL to a JSON rules file and press Load.</div>
+    <div class="conn-bar">
+      <div class="conn-status" id="conn-status">Not connected</div>
+      <button class="btn btn-ghost btn-sm" id="btn-reload">&#8635; Reload rules</button>
     </div>
-
     <div class="diag-bar" id="diag-bar"></div>
-
     <div class="scan-row">
       <button class="btn btn-primary" id="btn-scan">
         <span id="scan-label">Scan page</span>
       </button>
       <div class="scan-meta" id="scan-meta"></div>
     </div>
-
     <div id="check-body">
       <div class="empty">
-        <div class="empty-icon">◎</div>
+        <div class="empty-icon">&#9711;</div>
         <div class="empty-title">Nothing scanned yet</div>
-        <div class="empty-body">Load your rules URL above,<br>then hit Scan page.</div>
+        <div class="empty-body">Configure your API URL in Settings,<br>then hit Scan page.</div>
       </div>
     </div>
   </div>
 
-  <div class="panel" id="panel-settings">
-
-    <div class="settings-section">
-      <h3>JSON format</h3>
-      <p style="font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px">Host a JSON array at any public URL. Each rule:</p>
-      <div class="schema-box"><span class="sc">// style-rules.json</span>
-<span class="sv">[</span>
-  <span class="sv">{</span>
-    <span class="sk">"type"</span>:         <span class="ss">"substitution"</span>  <span class="sc">| "capitalization" | "punctuation" | "tone"</span>
-    <span class="sk">"pattern"</span>:      <span class="ss">"utilize"</span>       <span class="sc">plain word, or "/regex/flags"</span>
-    <span class="sk">"suggestion"</span>:    <span class="ss">"use"</span>           <span class="sc">shown as the fix  (optional)</span>
-    <span class="sk">"reason"</span>:        <span class="ss">"Simpler prose"</span> <span class="sc">tooltip note      (optional)</span>
-    <span class="sk">"severity"</span>:      <span class="ss">"error"</span>         <span class="sc">| "warning" | "info"</span>
-    <span class="sk">"caseSensitive"</span>:  <span class="sv">false</span>
-  <span class="sv">}</span>
-<span class="sv">]</span></div>
-    </div>
-
-    <div class="settings-section">
-      <h3>Add a rule manually</h3>
-      <div class="field">
-        <label>Type</label>
-        <select id="new-type">
-          <option value="substitution">Substitution</option>
-          <option value="capitalization">Capitalization</option>
-          <option value="punctuation">Punctuation</option>
-          <option value="tone">Tone / formality</option>
-        </select>
-      </div>
+  <!-- ── ADD RULE ───────────────────────────────────────── -->
+  <div class="panel" id="panel-rules">
+    <div class="add-rule-form">
+      <h3>Add a new rule to the style guide</h3>
       <div class="field-row">
-        <div class="field"><label>Pattern</label><input id="new-pattern" placeholder="utilize"></div>
-        <div class="field"><label>Suggestion</label><input id="new-suggestion" placeholder="use"></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Reason</label><input id="new-reason" placeholder="Simpler and more direct"></div>
+        <div class="field">
+          <label>Type</label>
+          <select id="new-type">
+            <option value="substitution">Substitution</option>
+            <option value="tone">Tone</option>
+            <option value="style">Style</option>
+            <option value="grammar">Grammar</option>
+            <option value="capitalization">Capitalization</option>
+            <option value="punctuation">Punctuation</option>
+            <option value="voice">Voice</option>
+          </select>
+        </div>
         <div class="field">
           <label>Severity</label>
           <select id="new-severity">
@@ -233,124 +206,233 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); font
           </select>
         </div>
       </div>
-      <div style="display:flex;justify-content:flex-end">
-        <button class="btn btn-primary btn-sm" id="btn-add-rule">+ Add rule</button>
+      <div class="field">
+        <label>Pattern (word/phrase or regex)</label>
+        <input id="new-pattern" type="text" placeholder='e.g. utilize  or  \bguys\b'>
+        <div class="field-hint">Use <code>\b</code> for word boundaries in regex patterns.</div>
+      </div>
+      <div class="field">
+        <label>Suggestion <span style="font-weight:400;color:var(--text3)">(optional)</span></label>
+        <input id="new-suggestion" type="text" placeholder="e.g. use">
+      </div>
+      <div class="field">
+        <label>Reason <span style="font-weight:400;color:var(--text3)">(optional)</span></label>
+        <input id="new-reason" type="text" placeholder="e.g. Simpler and more direct">
+      </div>
+      <div class="form-actions">
+        <div class="form-status" id="form-status"></div>
+        <button class="btn btn-success" id="btn-submit-rule">
+          <span id="submit-label">Save to style guide</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="section-label">Current rules <span id="rule-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)"></span></div>
+    <div class="rule-list" id="rule-list">
+      <div style="font-size:11px;color:var(--text3);padding:6px 0">No rules loaded yet.</div>
+    </div>
+  </div>
+
+  <!-- ── SETTINGS ───────────────────────────────────────── -->
+  <div class="panel" id="panel-settings">
+
+    <div class="settings-section">
+      <h3>Vercel API</h3>
+      <div class="field">
+        <label>API URL</label>
+        <input id="api-url" type="text" placeholder="https://your-project.vercel.app/api/rules">
+        <div class="field-hint">Your deployed Vercel function URL.</div>
+      </div>
+      <div class="field">
+        <label>Write secret</label>
+        <input id="write-secret" type="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
+        <div class="field-hint">Required to save new rules. Set this as WRITE_SECRET in Vercel.</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px">
+        <button class="btn btn-ghost btn-sm" id="btn-test">Test connection</button>
+        <button class="btn btn-primary btn-sm" id="btn-save-settings">Save</button>
       </div>
     </div>
 
     <div class="settings-section">
-      <h3>Active rules <span id="rule-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)"></span></h3>
-      <div class="rule-list" id="rule-list">
-        <div style="font-size:11px;color:var(--text3);padding:6px 0">No rules loaded yet.</div>
-      </div>
+      <h3>Vercel setup guide</h3>
+      <ol style="font-size:11px;color:var(--text2);line-height:2;padding-left:16px">
+        <li>Push the <code>api/rules.js</code> file to your GitHub repo</li>
+        <li>Import the repo in <a href="https://vercel.com" style="color:var(--blue)">vercel.com</a></li>
+        <li>Add environment variables in Vercel dashboard:<br>
+          <code style="font-family:var(--mono);background:var(--surface2);padding:2px 5px;border-radius:3px">GITHUB_TOKEN</code>
+          <code style="font-family:var(--mono);background:var(--surface2);padding:2px 5px;border-radius:3px">GITHUB_OWNER</code>
+          <code style="font-family:var(--mono);background:var(--surface2);padding:2px 5px;border-radius:3px">GITHUB_REPO</code>
+          <code style="font-family:var(--mono);background:var(--surface2);padding:2px 5px;border-radius:3px">GITHUB_FILE</code>
+          <code style="font-family:var(--mono);background:var(--surface2);padding:2px 5px;border-radius:3px">WRITE_SECRET</code>
+        </li>
+        <li>Deploy, then paste the <code>/api/rules</code> URL above</li>
+      </ol>
     </div>
+
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// All state
-var rules     = [];
-var allIssues = [];
+var rules      = [];
+var allIssues  = [];
+var apiUrl     = '';
+var writeSecret = '';
 
 // ── RULE ENGINE ──────────────────────────────────────────────────────────────
 
-function checkText(text) {
-  var violations = [];
-  for (var ri = 0; ri < rules.length; ri++) {
-    var rule = rules[ri];
-    var matches = findMatches(text, rule);
-    if (matches.length > 0) {
-      violations.push({ rule: rule, matches: matches });
-    }
-  }
-  return violations;
-}
-
 function isRegexLike(pattern) {
-  // Treat as regex if it starts with / or contains regex special sequences
-  return pattern.charAt(0) === '/' || /[\\\^\$\*\+\?\{\}\[\]\|\(\)]/.test(pattern);
+  return pattern.charAt(0) === '/' || /[\\^$*+?{}[\]|()]/.test(pattern);
 }
 
 function findMatches(text, rule) {
   var found = [];
   var pat = rule.pattern;
   if (!pat) return found;
-
-  var isCaseSensitive = rule.caseSensitive === true;
+  var caseSensitive = rule.caseSensitive === true;
 
   if (pat.charAt(0) === '/') {
-    // Slash-delimited regex: /pattern/flags
-    var last  = pat.lastIndexOf('/');
-    var src   = pat.slice(1, last);
+    var last = pat.lastIndexOf('/');
+    var src = pat.slice(1, last);
     var flags = pat.slice(last + 1) || 'gi';
-    if (flags.indexOf('g') === -1) flags = flags + 'g';
-    try {
-      var rx = new RegExp(src, flags);
-      var m; rx.lastIndex = 0;
-      while ((m = rx.exec(text)) !== null) found.push(m[0]);
-    } catch(e) {}
-
+    if (flags.indexOf('g') === -1) flags += 'g';
+    try { var rx = new RegExp(src, flags); var m; while ((m = rx.exec(text)) !== null) found.push(m[0]); } catch(e) {}
   } else if (isRegexLike(pat)) {
-    // Raw regex string (e.g. from JSON: "\bguys\b" or "\s,")
-    var flags2 = isCaseSensitive ? 'g' : 'gi';
-    if (flags2.indexOf('g') === -1) flags2 = flags2 + 'g';
-    try {
-      var rx2 = new RegExp(pat, flags2);
-      var m2; rx2.lastIndex = 0;
-      while ((m2 = rx2.exec(text)) !== null) found.push(m2[0]);
-    } catch(e) {}
-
+    var flags2 = caseSensitive ? 'g' : 'gi';
+    try { var rx2 = new RegExp(pat, flags2); var m2; while ((m2 = rx2.exec(text)) !== null) found.push(m2[0]); } catch(e) {}
   } else {
-    // Plain literal string — escape it and optionally add word boundaries
-    var flags3  = isCaseSensitive ? 'g' : 'gi';
+    var flags3 = caseSensitive ? 'g' : 'gi';
     var escaped = pat.replace(/[-[\]\/{}()*+?.\\^$|]/g, '\\$&');
-    var bounded = (rule.type === 'substitution' || rule.type === 'tone' || rule.type === 'grammar' || rule.type === 'style' || rule.type === 'voice');
-    var finalPat = bounded ? ('\\b' + escaped + '\\b') : escaped;
-    try {
-      var rx3 = new RegExp(finalPat, flags3);
-      var m3; rx3.lastIndex = 0;
-      while ((m3 = rx3.exec(text)) !== null) found.push(m3[0]);
-    } catch(e) {}
+    var needsBoundary = (rule.type === 'substitution' || rule.type === 'tone' || rule.type === 'grammar' || rule.type === 'style' || rule.type === 'voice');
+    try { var rx3 = new RegExp(needsBoundary ? ('\\b' + escaped + '\\b') : escaped, flags3); var m3; while ((m3 = rx3.exec(text)) !== null) found.push(m3[0]); } catch(e) {}
   }
 
-  // dedupe
   var unique = [];
-  for (var di = 0; di < found.length; di++) {
-    var already = false;
-    for (var dj = 0; dj < unique.length; dj++) {
-      if (unique[dj] === found[di]) { already = true; break; }
-    }
-    if (!already) unique.push(found[di]);
+  for (var i = 0; i < found.length; i++) {
+    var dupe = false;
+    for (var j = 0; j < unique.length; j++) { if (unique[j] === found[i]) { dupe = true; break; } }
+    if (!dupe) unique.push(found[i]);
   }
   return unique;
 }
 
-// ── RENDER CHECK TAB ─────────────────────────────────────────────────────────
+function checkText(text) {
+  var violations = [];
+  for (var i = 0; i < rules.length; i++) {
+    var matches = findMatches(text, rules[i]);
+    if (matches.length) violations.push({ rule: rules[i], matches: matches });
+  }
+  return violations;
+}
+
+// ── FETCH RULES ──────────────────────────────────────────────────────────────
+
+function loadRules() {
+  if (!apiUrl) {
+    setConnStatus('No API URL configured', '');
+    return;
+  }
+  setConnStatus('Loading\u2026', 'loading');
+  fetch(apiUrl)
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      if (!Array.isArray(data)) throw new Error('Expected JSON array');
+      rules = data;
+      setConnStatus('\u2713 ' + rules.length + ' rules loaded', 'ok');
+      renderRuleList();
+    })
+    .catch(function(e) {
+      setConnStatus('\u2717 ' + e.message, 'err');
+    });
+}
+
+function setConnStatus(msg, cls) {
+  var el = document.getElementById('conn-status');
+  el.textContent = msg;
+  el.className = 'conn-status' + (cls ? ' ' + cls : '');
+}
+
+// ── SUBMIT NEW RULE ──────────────────────────────────────────────────────────
+
+function submitRule() {
+  if (!apiUrl) { setFormStatus('Configure API URL in Settings first', 'err'); return; }
+  var pattern = document.getElementById('new-pattern').value.trim();
+  if (!pattern) { document.getElementById('new-pattern').focus(); return; }
+
+  var rule = {
+    type:       document.getElementById('new-type').value,
+    pattern:    pattern,
+    suggestion: document.getElementById('new-suggestion').value.trim(),
+    reason:     document.getElementById('new-reason').value.trim(),
+    severity:   document.getElementById('new-severity').value,
+    caseSensitive: false
+  };
+
+  var btn = document.getElementById('btn-submit-rule');
+  btn.disabled = true;
+  document.getElementById('submit-label').innerHTML = '<span class="spinner"></span> Saving\u2026';
+  setFormStatus('', '');
+
+  fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Write-Secret': writeSecret
+    },
+    body: JSON.stringify(rule)
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(res) {
+    btn.disabled = false;
+    document.getElementById('submit-label').textContent = 'Save to style guide';
+    if (!res.ok) throw new Error(res.data.error || 'Unknown error');
+    // Clear form
+    document.getElementById('new-pattern').value    = '';
+    document.getElementById('new-suggestion').value = '';
+    document.getElementById('new-reason').value     = '';
+    setFormStatus('\u2713 Rule saved!', 'ok');
+    showToast('Rule added to style guide', true);
+    loadRules(); // refresh
+    setTimeout(function() { setFormStatus('', ''); }, 3000);
+  })
+  .catch(function(e) {
+    btn.disabled = false;
+    document.getElementById('submit-label').textContent = 'Save to style guide';
+    setFormStatus('\u2717 ' + e.message, 'err');
+  });
+}
+
+function setFormStatus(msg, cls) {
+  var el = document.getElementById('form-status');
+  el.textContent = msg;
+  el.className = 'form-status' + (cls ? ' ' + cls : '');
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
 
 function sevOrder(s) { return s === 'error' ? 0 : s === 'warning' ? 1 : 2; }
 
 function renderIssues() {
   var body = document.getElementById('check-body');
-  var meta = document.getElementById('scan-meta');
 
   if (allIssues.length === 0) {
-    body.innerHTML = '<div class="empty"><div class="empty-icon" style="color:var(--green)">✓</div><div class="empty-title" style="color:var(--green)">All clear</div><div class="empty-body">No style issues found on this page.</div></div>';
+    body.innerHTML = '<div class="empty"><div class="empty-icon" style="color:var(--green)">&#10003;</div><div class="empty-title" style="color:var(--green)">All clear</div><div class="empty-body">No style issues found on this page.</div></div>';
     return;
   }
 
   var errors = 0, warnings = 0, infos = 0;
-  for (var ii = 0; ii < allIssues.length; ii++) {
-    for (var vi = 0; vi < allIssues[ii].violations.length; vi++) {
-      var sev = allIssues[ii].violations[vi].rule.severity;
-      if (sev === 'error') errors++;
-      else if (sev === 'warning') warnings++;
-      else infos++;
+  for (var i = 0; i < allIssues.length; i++) {
+    for (var j = 0; j < allIssues[i].violations.length; j++) {
+      var s = allIssues[i].violations[j].rule.severity;
+      if (s === 'error') errors++; else if (s === 'warning') warnings++; else infos++;
     }
   }
 
-  // Sort worst-first
   var sorted = allIssues.slice().sort(function(a, b) {
     var aw = 99, bw = 99;
     for (var i = 0; i < a.violations.length; i++) { var o = sevOrder(a.violations[i].rule.severity); if (o < aw) aw = o; }
@@ -359,9 +441,7 @@ function renderIssues() {
   });
 
   var cards = '';
-  for (var ci = 0; ci < sorted.length; ci++) {
-    cards += renderCard(sorted[ci], ci);
-  }
+  for (var ci = 0; ci < sorted.length; ci++) cards += renderCard(sorted[ci], ci);
 
   body.innerHTML =
     '<div class="stats">' +
@@ -375,31 +455,22 @@ function renderIssues() {
 
 function renderCard(issue, i) {
   var worst = 'info';
-  for (var vi = 0; vi < issue.violations.length; vi++) {
-    var sev = issue.violations[vi].rule.severity;
-    if (sevOrder(sev) < sevOrder(worst)) worst = sev;
+  for (var j = 0; j < issue.violations.length; j++) {
+    var s = issue.violations[j].rule.severity;
+    if (sevOrder(s) < sevOrder(worst)) worst = s;
   }
   var vc = issue.violations.length;
-
   var vhtml = '';
-  for (var vi = 0; vi < issue.violations.length; vi++) {
-    var v = issue.violations[vi];
+  for (var j = 0; j < issue.violations.length; j++) {
+    var v = issue.violations[j];
     var mhtml = '';
-    for (var mi = 0; mi < v.matches.length; mi++) {
-      mhtml += '<span class="v-found">' + esc(v.matches[mi]) + '</span> ';
-    }
-    vhtml +=
-      '<div class="violation">' +
-        '<span class="vtype vt-' + v.rule.type + '">' + v.rule.type + '</span>' +
-        '<div class="v-body">' +
-          '<div class="v-line">' + mhtml +
-            (v.rule.suggestion ? '<span class="v-arrow">→</span><span class="v-suggest">' + esc(v.rule.suggestion) + '</span>' : '') +
-          '</div>' +
-          (v.rule.reason ? '<div class="v-reason">' + esc(v.rule.reason) + '</div>' : '') +
-        '</div>' +
-      '</div>';
+    for (var k = 0; k < v.matches.length; k++) mhtml += '<span class="v-found">' + esc(v.matches[k]) + '</span> ';
+    vhtml += '<div class="violation">' +
+      '<span class="vtype vt-' + v.rule.type + '">' + v.rule.type + '</span>' +
+      '<div class="v-body"><div class="v-line">' + mhtml +
+        (v.rule.suggestion ? '<span class="v-arrow">&#8594;</span><span class="v-suggest">' + esc(v.rule.suggestion) + '</span>' : '') +
+      '</div>' + (v.rule.reason ? '<div class="v-reason">' + esc(v.rule.reason) + '</div>' : '') + '</div></div>';
   }
-
   return '<div class="issue">' +
     '<div class="issue-head" onclick="toggleCard(' + i + ')">' +
       '<div class="sev-bar sev-' + worst + '"></div>' +
@@ -407,30 +478,16 @@ function renderCard(issue, i) {
       '<span class="issue-badge ib-' + worst + '">' + vc + ' issue' + (vc !== 1 ? 's' : '') + '</span>' +
       '<span class="issue-chev" id="chev-' + i + '">&#9654;</span>' +
     '</div>' +
-    '<div class="issue-body" id="ibody-' + i + '">' +
-      vhtml +
+    '<div class="issue-body" id="ibody-' + i + '">' + vhtml +
       '<div class="issue-actions"><button class="btn btn-ghost btn-xs" onclick="focusNode(\'' + issue.nodeId + '\')">&#8599; Focus layer</button></div>' +
-    '</div>' +
-  '</div>';
+    '</div></div>';
 }
-
-function toggleCard(i) {
-  document.getElementById('ibody-' + i).classList.toggle('open');
-  document.getElementById('chev-' + i).classList.toggle('open');
-}
-
-function focusNode(id) { send({ type: 'focus-node', id: id }); }
-
-// ── RENDER RULES LIST ────────────────────────────────────────────────────────
 
 function renderRuleList() {
-  var list  = document.getElementById('rule-list');
+  var list = document.getElementById('rule-list');
   var count = document.getElementById('rule-count');
   count.textContent = '(' + rules.length + ')';
-  if (rules.length === 0) {
-    list.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:6px 0">No rules loaded yet.</div>';
-    return;
-  }
+  if (!rules.length) { list.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:6px 0">No rules loaded yet.</div>'; return; }
   var html = '';
   for (var i = 0; i < rules.length; i++) {
     var r = rules[i];
@@ -438,87 +495,55 @@ function renderRuleList() {
       '<span class="vtype vt-' + r.type + '" style="flex-shrink:0">' + r.type + '</span>' +
       '<span class="rule-pattern">' + esc(r.pattern) + '</span>' +
       (r.suggestion ? '<span class="rule-suggest">&#8594; ' + esc(r.suggestion) + '</span>' : '') +
-      '<button class="rule-del" onclick="deleteRule(' + i + ')">&#215;</button>' +
     '</div>';
   }
   list.innerHTML = html;
 }
 
-function deleteRule(i) {
-  rules.splice(i, 1);
-  renderRuleList();
-  send({ type: 'cache-rules', rules: rules });
+function toggleCard(i) {
+  document.getElementById('ibody-' + i).classList.toggle('open');
+  document.getElementById('chev-' + i).classList.toggle('open');
 }
-
-// ── URL FETCH ────────────────────────────────────────────────────────────────
-
-function fetchRules(url) {
-  var statusEl = document.getElementById('url-status');
-  var hintEl   = document.getElementById('url-hint');
-  statusEl.className = 'url-status loading';
-  statusEl.textContent = 'fetching\u2026';
-  hintEl.textContent = '';
-
-  fetch(url, { cache: 'no-store' })
-    .then(function(res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    })
-    .then(function(data) {
-      if (!Array.isArray(data)) throw new Error('Expected a JSON array');
-      rules = data;
-      statusEl.className = 'url-status ok';
-      statusEl.textContent = '\u2713 ' + rules.length + ' rules loaded';
-      hintEl.textContent = 'Last fetched: ' + new Date().toLocaleTimeString();
-      send({ type: 'save-url', url: url });
-      send({ type: 'cache-rules', rules: rules });
-      renderRuleList();
-      showToast(rules.length + ' rules loaded');
-    })
-    .catch(function(e) {
-      statusEl.className = 'url-status err';
-      statusEl.textContent = '\u2717 ' + e.message;
-      hintEl.textContent = 'Check the URL returns valid JSON with CORS enabled.';
-    });
-}
+function focusNode(id) { send({ type: 'focus-node', id: id }); }
 
 // ── EVENTS ───────────────────────────────────────────────────────────────────
 
-document.getElementById('btn-fetch').addEventListener('click', function() {
-  var url = document.getElementById('url-input').value.trim();
-  if (url) fetchRules(url);
-});
-
-document.getElementById('url-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') document.getElementById('btn-fetch').click();
-});
+document.getElementById('btn-reload').addEventListener('click', loadRules);
 
 document.getElementById('btn-scan').addEventListener('click', function() {
-  if (rules.length === 0) {
-    showToast('Load rules first');
-    return;
-  }
+  if (!rules.length) { showToast('Load rules first'); return; }
   document.getElementById('btn-scan').disabled = true;
   document.getElementById('scan-label').innerHTML = '<span class="spinner"></span> Scanning\u2026';
   send({ type: 'scan-page' });
 });
 
-document.getElementById('btn-add-rule').addEventListener('click', function() {
-  var pattern = document.getElementById('new-pattern').value.trim();
-  if (!pattern) { document.getElementById('new-pattern').focus(); return; }
-  rules.push({
-    type:       document.getElementById('new-type').value,
-    pattern:    pattern,
-    suggestion: document.getElementById('new-suggestion').value.trim(),
-    reason:     document.getElementById('new-reason').value.trim(),
-    severity:   document.getElementById('new-severity').value
-  });
-  document.getElementById('new-pattern').value    = '';
-  document.getElementById('new-suggestion').value = '';
-  document.getElementById('new-reason').value     = '';
-  renderRuleList();
-  send({ type: 'cache-rules', rules: rules });
-  showToast('Rule added');
+document.getElementById('btn-submit-rule').addEventListener('click', submitRule);
+
+document.getElementById('btn-save-settings').addEventListener('click', function() {
+  apiUrl      = document.getElementById('api-url').value.trim();
+  writeSecret = document.getElementById('write-secret').value.trim();
+  send({ type: 'save-settings', apiUrl: apiUrl, writeSecret: writeSecret });
+  showToast('Settings saved', true);
+  if (apiUrl) loadRules();
+});
+
+document.getElementById('btn-test').addEventListener('click', function() {
+  var url = document.getElementById('api-url').value.trim();
+  if (!url) { showToast('Enter a URL first'); return; }
+  var btn = document.getElementById('btn-test');
+  btn.disabled = true;
+  btn.textContent = 'Testing\u2026';
+  fetch(url)
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(res) {
+      btn.disabled = false; btn.textContent = 'Test connection';
+      if (res.ok && Array.isArray(res.data)) showToast('\u2713 Connected \u2014 ' + res.data.length + ' rules found', true);
+      else showToast('\u2717 Unexpected response format');
+    })
+    .catch(function(e) {
+      btn.disabled = false; btn.textContent = 'Test connection';
+      showToast('\u2717 ' + e.message);
+    });
 });
 
 document.querySelectorAll('.tab').forEach(function(tab) {
@@ -527,7 +552,7 @@ document.querySelectorAll('.tab').forEach(function(tab) {
     document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
     tab.classList.add('active');
     document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
-    if (tab.dataset.tab === 'settings') renderRuleList();
+    if (tab.dataset.tab === 'rules') renderRuleList();
   });
 });
 
@@ -538,88 +563,68 @@ window.onmessage = function(event) {
   if (!msg) return;
 
   if (msg.type === 'init') {
-    if (msg.rulesUrl) {
-      document.getElementById('url-input').value = msg.rulesUrl;
-      fetchRules(msg.rulesUrl); // auto-reload saved URL
-    } else if (msg.cachedRules && msg.cachedRules.length > 0) {
-      rules = msg.cachedRules;
-      var statusEl = document.getElementById('url-status');
-      statusEl.className = 'url-status ok';
-      statusEl.textContent = '\u2713 ' + rules.length + ' rules (cached)';
-      document.getElementById('url-hint').textContent = 'Using cached rules. Enter a URL and Load to refresh.';
-      renderRuleList();
+    if (msg.apiUrl) {
+      apiUrl = msg.apiUrl;
+      document.getElementById('api-url').value = apiUrl;
+      loadRules();
+    }
+    if (msg.writeSecret) {
+      writeSecret = msg.writeSecret;
+      document.getElementById('write-secret').value = writeSecret;
     }
 
   } else if (msg.type === 'scan-results') {
     document.getElementById('btn-scan').disabled = false;
     document.getElementById('scan-label').textContent = 'Scan page';
-
     var nodes = msg.nodes || [];
     var textNodes = [];
-    for (var ni = 0; ni < nodes.length; ni++) {
-      if (nodes[ni].text && nodes[ni].text.trim().length > 0) {
-        textNodes.push(nodes[ni]);
-      }
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].text && nodes[i].text.trim().length > 0) textNodes.push(nodes[i]);
     }
-
-    // Show diagnostic with sample text
     var diag = document.getElementById('diag-bar');
-    var sampleTexts = [];
-    for (var si = 0; si < Math.min(3, textNodes.length); si++) {
-      var sample = textNodes[si].text.trim().substring(0, 40);
-      if (textNodes[si].text.trim().length > 40) sample += '\u2026';
-      sampleTexts.push('\u201c' + sample + '\u201d');
+    var samples = [];
+    for (var i = 0; i < Math.min(3, textNodes.length); i++) {
+      var s = textNodes[i].text.trim().substring(0, 35);
+      if (textNodes[i].text.trim().length > 35) s += '\u2026';
+      samples.push('\u201c' + s + '\u201d');
     }
-    var sampleStr = sampleTexts.length > 0 ? ' \u2014 e.g. ' + sampleTexts.join(', ') : '';
-    diag.textContent = textNodes.length + ' text layers found \u00b7 ' + rules.length + ' rules active' + sampleStr;
+    diag.textContent = textNodes.length + ' text layers \u00b7 ' + rules.length + ' rules \u2014 ' + samples.join(', ');
     diag.className = 'diag-bar visible';
-
     allIssues = [];
-    for (var ni = 0; ni < textNodes.length; ni++) {
-      var node = textNodes[ni];
-      var violations = checkText(node.text);
-      if (violations.length > 0) {
-        allIssues.push({ nodeId: node.id, name: node.name, text: node.text, violations: violations });
-      }
+    for (var i = 0; i < textNodes.length; i++) {
+      var violations = checkText(textNodes[i].text);
+      if (violations.length) allIssues.push({ nodeId: textNodes[i].id, name: textNodes[i].name, text: textNodes[i].text, violations: violations });
     }
     renderIssues();
 
   } else if (msg.type === 'live-update') {
     var nodes = msg.nodes || [];
-    for (var ni = 0; ni < nodes.length; ni++) {
-      var node = nodes[ni];
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
       var violations = checkText(node.text || '');
       var idx = -1;
-      for (var ii = 0; ii < allIssues.length; ii++) {
-        if (allIssues[ii].nodeId === node.id) { idx = ii; break; }
-      }
-      if (violations.length > 0) {
+      for (var j = 0; j < allIssues.length; j++) { if (allIssues[j].nodeId === node.id) { idx = j; break; } }
+      if (violations.length) {
         var entry = { nodeId: node.id, name: node.name, text: node.text, violations: violations };
-        if (idx >= 0) allIssues[idx] = entry;
-        else allIssues.push(entry);
-      } else if (idx >= 0) {
-        allIssues.splice(idx, 1);
-      }
+        if (idx >= 0) allIssues[idx] = entry; else allIssues.push(entry);
+      } else if (idx >= 0) allIssues.splice(idx, 1);
     }
     renderIssues();
+
+  } else if (msg.type === 'settings-saved') {
+    // confirmed
   }
 };
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 
 function send(msg) { parent.postMessage({ pluginMessage: msg }, '*'); }
-
-function esc(s) {
-  return String(s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function showToast(msg) {
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg, success) {
   var t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2200);
+  t.className = 'toast' + (success ? ' success' : '') + ' show';
+  setTimeout(function() { t.className = 'toast'; }, 2400);
 }
 </script>
 </body>
