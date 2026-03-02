@@ -304,5 +304,14 @@
     "reason": "Spell out informal acronyms",
     "severity": "info",
     "caseSensitive": true
+  },
+  {
+    "type": "style",
+    "pattern": "Survey Monkey",
+    "suggestion": "SurveyMonkey",
+    "reason": "Brand guidelines call for one word",
+    "severity": "error",
+    "caseSensitive": false,
+    "id": "SG051"
   }
 ]
